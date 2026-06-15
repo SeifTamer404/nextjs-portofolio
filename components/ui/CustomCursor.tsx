@@ -1,12 +1,13 @@
-﻿"use client";
+"use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
-/* --- Custom Glowing Cursor ----------------------------------- */
+/* --- Custom Glowing Cursor (desktop-only) -------------------- */
 export default function CustomCursor() {
+  const [isDesktop, setIsDesktop] = useState(false);
   const cursorRef = useRef<HTMLDivElement>(null);
-  const dotRef = useRef<HTMLDivElement>(null);
+  const dotRef    = useRef<HTMLDivElement>(null);
 
   // Raw mouse position
   const mouseX = useMotionValue(-100);
@@ -21,7 +22,23 @@ export default function CustomCursor() {
   const dotX = useSpring(mouseX, { damping: 20, stiffness: 600, mass: 0.1 });
   const dotY = useSpring(mouseY, { damping: 20, stiffness: 600, mass: 0.1 });
 
+  // Detect if real pointer device (mouse) exists
   useEffect(() => {
+    const mq = window.matchMedia("(pointer: fine)");
+    const update = () => {
+      const desktop = mq.matches && navigator.maxTouchPoints === 0;
+      setIsDesktop(desktop);
+      // Restore cursor on touch devices
+      if (!desktop) document.body.style.cursor = "auto";
+    };
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!isDesktop) return;
+
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
@@ -36,7 +53,6 @@ export default function CustomCursor() {
 
     window.addEventListener("mousemove", handleMouseMove);
 
-    // Add hover effect when over interactive elements
     const interactives = document.querySelectorAll<HTMLElement>(
       "a, button, [role='button'], input, textarea, select, label, [data-cursor-hover]"
     );
@@ -45,7 +61,6 @@ export default function CustomCursor() {
       el.addEventListener("mouseleave", handleMouseLeaveLink);
     });
 
-    // Observe DOM mutations to catch dynamically added elements
     const observer = new MutationObserver(() => {
       const newInteractives = document.querySelectorAll<HTMLElement>(
         "a, button, [role='button'], [data-cursor-hover]"
@@ -63,7 +78,10 @@ export default function CustomCursor() {
       window.removeEventListener("mousemove", handleMouseMove);
       observer.disconnect();
     };
-  }, [mouseX, mouseY]);
+  }, [isDesktop, mouseX, mouseY]);
+
+  // Don't render anything on touch/mobile devices
+  if (!isDesktop) return null;
 
   return (
     <>

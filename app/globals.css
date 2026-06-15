@@ -70,7 +70,11 @@ body {
   background: var(--black);
   min-height: 100dvh;
   overflow-x: hidden;
-  cursor: none; /* replaced by custom cursor */
+}
+
+/* Hide native cursor ONLY on real pointer devices (desktop) */
+@media (pointer: fine) {
+  body { cursor: none; }
 }
 
 /* ─── Noise Texture Overlay (Cinematic) ─────────────────────── */
