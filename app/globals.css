@@ -1,26 +1,274 @@
-@import "tailwindcss";
+@import "tailwindcss/preflight" layer(base);
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
 
+/* ─── Design Tokens ─────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Colors */
+  --black:        #000000;
+  --white:        #ffffff;
+  --purple:       #8b5cf6;
+  --purple-dim:   #6d28d9;
+  --purple-glow:  rgba(139, 92, 246, 0.25);
+  --cyan:         #06b6d4;
+  --cyan-dim:     #0891b2;
+  --cyan-glow:    rgba(6, 182, 212, 0.25);
+  --surface:      #0a0a0a;
+  --surface-2:    #111111;
+  --surface-3:    #1a1a1a;
+  --border:       rgba(255, 255, 255, 0.06);
+  --border-glow:  rgba(139, 92, 246, 0.3);
+  --text-primary: #f0f0f0;
+  --text-muted:   rgba(240, 240, 240, 0.5);
+  --text-dim:     rgba(240, 240, 240, 0.25);
+
+  /* Typography — next/font injects --font-inter, --font-space-grotesk, --font-jetbrains-mono */
+  --font-sans:    var(--font-inter, "Inter", system-ui, sans-serif);
+  --font-display: var(--font-space-grotesk, "Space Grotesk", system-ui, sans-serif);
+  --font-mono:    var(--font-jetbrains-mono, "JetBrains Mono", monospace);
+
+  /* Spacing */
+  --section-pad-y: clamp(5rem, 10vw, 10rem);
+  --container-px:  clamp(1.25rem, 5vw, 5rem);
+
+  /* Transitions */
+  --ease-smooth:  cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast:   150ms;
+  --duration-base:   300ms;
+  --duration-slow:   600ms;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--black);
+  --color-foreground: var(--text-primary);
+  --color-purple:     var(--purple);
+  --color-cyan:       var(--cyan);
+  --font-sans:        var(--font-inter, sans-serif);
+  --font-display:     var(--font-space-grotesk, sans-serif);
+  --font-mono:        var(--font-jetbrains-mono, monospace);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Reset & Base ──────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  background: var(--black);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  scroll-behavior: auto; /* Lenis handles smooth scroll */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--black);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  cursor: none; /* replaced by custom cursor */
+}
+
+/* ─── Noise Texture Overlay (Cinematic) ─────────────────────── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  mix-blend-mode: overlay;
+}
+
+/* ─── Custom Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--black);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--purple-dim);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--purple);
+}
+
+/* ─── Selection ─────────────────────────────────────────────── */
+::selection {
+  background: var(--purple-glow);
+  color: var(--white);
+}
+
+/* ─── Typography Scale ──────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+p {
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ─── Utility Classes ───────────────────────────────────────── */
+.container-fluid {
+  @apply max-w-7xl mx-auto px-6 md:px-12 w-full;
+}
+
+.section-pad {
+  padding-block: var(--section-pad-y);
+}
+
+/* ─── Section Spacing ───────────────────────────────────────── */
+/* Consistent vertical breathing room between every major page section */
+main > section + section {
+  margin-top: clamp(3rem, 6vw, 6rem);
+}
+
+/* ─── Pill / Badge Tags ─────────────────────────────────────── */
+/* Shared base for all skill tags, status badges, and button-pills.
+   NEVER set a fixed height — let padding drive it. */
+.pill-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.4rem 1.05rem;  /* ~6.4px 16.8px — generous enough at small font sizes */
+  border-radius: 9999px;
+  white-space: nowrap;       /* never break text inside a pill */
+  font-size: 0.8125rem;     /* 13px */
+  font-weight: 500;
+  line-height: 1.2;          /* slight breathing over pure 1 */
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--purple) 0%, var(--cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow effects */
+.glow-purple {
+  box-shadow: 0 0 30px var(--purple-glow), 0 0 60px rgba(139, 92, 246, 0.1);
+}
+.glow-cyan {
+  box-shadow: 0 0 30px var(--cyan-glow), 0 0 60px rgba(6, 182, 212, 0.1);
+}
+
+/* Glassmorphism card */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+}
+
+/* Animated border gradient */
+.border-gradient {
+  position: relative;
+  border-radius: 1rem;
+}
+.border-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--purple), var(--cyan), transparent);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Neon text glow */
+.neon-purple {
+  text-shadow:
+    0 0 10px var(--purple),
+    0 0 30px var(--purple-glow),
+    0 0 60px rgba(139, 92, 246, 0.1);
+}
+.neon-cyan {
+  text-shadow:
+    0 0 10px var(--cyan),
+    0 0 30px var(--cyan-glow),
+    0 0 60px rgba(6, 182, 212, 0.1);
+}
+
+/* Dot grid background */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Scan-line animation */
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.scanline::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--purple), transparent);
+  animation: scanline 4s linear infinite;
+  pointer-events: none;
+}
+
+/* Smooth fade-in for page entry */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fadeUp 0.8s var(--ease-smooth) forwards;
+}
+
+/* Lenis scroll smoothness */
+html.lenis {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
