@@ -10,7 +10,7 @@
 
 **A high-performance, immersive portfolio website built with Next.js, Three.js, GSAP, and Framer Motion.**
 
-[🌐 Live Site](https://github.com/SeifTamer404/nextjs-portofolio) · [📄 CV](https://drive.google.com/file/d/11MKn85of8d2ESq5DEmZXfs55_j2Jgqfw/view?usp=drive_link) · [💼 LinkedIn](https://www.linkedin.com/in/seif-elsharnoby-278793163/)
+[🌐 Live Site](https://seif-tamer-elsayed-portfolio.vercel.app) · [📄 CV](https://drive.google.com/file/d/11MKn85of8d2ESq5DEmZXfs55_j2Jgqfw/view?usp=drive_link) · [💼 LinkedIn](https://www.linkedin.com/in/seif-elsharnoby-278793163/)
 
 </div>
 
