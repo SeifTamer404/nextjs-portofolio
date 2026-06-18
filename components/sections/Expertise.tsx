@@ -236,13 +236,25 @@ export default function Expertise() {
   return (
     <section
       id="expertise"
-      className="relative w-full bg-black border-t border-white/[0.06] overflow-hidden py-20 md:py-28"
+      className="relative w-full bg-black"
     >
-      {/* Ambient blobs */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--purple)]/[0.04] blur-[140px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[var(--cyan)]/[0.04] blur-[120px] rounded-full pointer-events-none" />
+      {/* ── Top separator ── */}
+      <div
+        aria-hidden="true"
+        className="absolute top-0 inset-x-0 h-px pointer-events-none"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.06) 20%, rgba(255,255,255,0.06) 80%, transparent)" }}
+      />
+      {/* ── Gradient fade in from top ── */}
+      <div
+        aria-hidden="true"
+        className="absolute top-0 inset-x-0 h-48 pointer-events-none"
+        style={{ background: "linear-gradient(to bottom, rgba(139,92,246,0.04) 0%, transparent 100%)" }}
+      />
+      {/* Ambient blobs — overflow allowed so they don't clip */}
+      <div aria-hidden="true" className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: "radial-gradient(ellipse, rgba(139,92,246,0.06) 0%, transparent 70%)", filter: "blur(120px)" }} />
+      <div aria-hidden="true" className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: "radial-gradient(ellipse, rgba(6,182,212,0.05) 0%, transparent 70%)", filter: "blur(100px)" }} />
 
-      <div className="container-fluid relative z-10">
+      <div className="container-fluid section-pad relative z-10">
         {/* ── Section header ── */}
         <div className="mb-14 md:mb-20">
           <motion.p
@@ -347,6 +359,13 @@ export default function Expertise() {
           ))}
         </div>
       </div>
+
+      {/* ── Bottom separator ── */}
+      <div
+        aria-hidden="true"
+        className="absolute bottom-0 inset-x-0 h-48 pointer-events-none"
+        style={{ background: "linear-gradient(to top, rgba(6,182,212,0.03) 0%, transparent 100%)" }}
+      />
     </section>
   );
 }

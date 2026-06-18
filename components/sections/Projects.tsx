@@ -132,7 +132,8 @@ function ProjectCard({
               fill
               className="object-cover"
               sizes="(max-width: 768px) 90vw, 40vw"
-              priority={index === 0}
+              loading="eager"
+              priority={index < 3}
             />
           </div>
 

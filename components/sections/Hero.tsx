@@ -132,8 +132,8 @@ export default function Hero() {
       <AmbientGradient />
 
       {/* -- Text content overlay -- */}
-      <div className="relative z-10 flex-1 flex items-center py-[clamp(5rem,12vh,8rem)] px-[clamp(1.25rem,6vw,5rem)]">
-        <div className="w-full max-w-[1400px] mx-auto">
+      <div className="relative z-10 flex-1 flex items-center py-[clamp(5rem,12vh,8rem)]" style={{ paddingInline: 'var(--container-px)' }}>
+        <div className="w-full max-w-[80rem] mx-auto">
           <motion.div
             className="max-w-[min(800px,100%)]"
             variants={containerVariants}

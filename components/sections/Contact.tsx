@@ -17,7 +17,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="relative py-32 md:py-48 bg-black border-t border-[var(--border)] overflow-hidden flex flex-col justify-between"
+      className="relative w-full bg-black overflow-hidden flex flex-col justify-between section-pad"
     >
       <motion.div
         initial={{ opacity: 0, y: 50 }}

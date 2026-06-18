@@ -5,6 +5,19 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Stars, Float, Sparkles } from "@react-three/drei";
 import * as THREE from "three";
 
+/* ─── Suppress THREE.Clock deprecation warning ────────────────────
+   @react-three/fiber v9 uses THREE.Clock internally. Three.js r165+
+   deprecated it in favour of THREE.Timer. Suppress until R3F updates.
+──────────────────────────────────────────────────────────────────── */
+if (typeof window !== "undefined") {
+  const _warn = console.warn.bind(console);
+  console.warn = (...args: unknown[]) => {
+    if (typeof args[0] === "string" && args[0].includes("THREE.Clock")) return;
+    _warn(...args);
+  };
+}
+
+
 /* ─── Mobile detection hook ───────────────────────────────────── */
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
