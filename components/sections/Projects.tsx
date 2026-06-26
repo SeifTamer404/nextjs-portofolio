@@ -27,6 +27,7 @@ interface Project {
   year: string;
   href: string;
   github: string;
+  demo?: string;
 }
 
 /* --- Project Data -------------------------------------------- */
@@ -41,8 +42,9 @@ const PROJECTS: Project[] = portfolioData.projects.map((p, index) => ({
   accentColor: ACCENT_COLORS[index % ACCENT_COLORS.length],
   image: p.image,
   year: new Date().getFullYear().toString(),
-  href: "#",
+  href: p.demo || "#",
   github: p.github,
+  demo: p.demo,
 }));
 
 /* --- Project Card -------------------------------------------- */
@@ -80,17 +82,17 @@ function ProjectCard({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={handleMouseLeave}
       className="flex-shrink-0 flex flex-col"
-      /* 🔥 1. المعادلة السحرية: الطول والعرض بيكبروا ويصغروا مع الشاشة 🔥 */
       style={{ 
         width: "clamp(300px, 32vw, 460px)", 
-        height: "clamp(420px, 68vh, 600px)" 
+        height: "clamp(440px, 70vh, 620px)" 
       }}
       aria-label={`Project: ${project.title}`}
     >
       {/* -- Glass card -- */}
       <div
-        className="relative flex flex-col h-full rounded-2xl overflow-hidden"
+        className="relative flex flex-col h-full rounded-2xl"
         style={{
+          overflow: "clip",
           background: "rgba(255, 255, 255, 0.025)",
           backdropFilter: "blur(24px)",
           WebkitBackdropFilter: "blur(24px)",
@@ -115,8 +117,7 @@ function ProjectCard({
         {/* -- Image / Visual area -- */}
         <div
           className="relative overflow-hidden flex-shrink-0"
-          /* 🔥 2. الصورة بتاخد 42% دايماً، عشان تسيب 58% للكلام يتنفس فيهم 🔥 */
-          style={{ height: "42%" }}
+          style={{ height: "40%", background: "rgba(0,0,0,0.4)" }}
         >
           {/* Inner image */}
           <div
@@ -172,8 +173,7 @@ function ProjectCard({
         </div>
 
         {/* -- Text content -- */}
-        {/* صغرنا الـ Padding شوية عشان الشاشات الصغيرة */}
-        <div className="flex flex-col flex-1 p-5 md:p-6 overflow-hidden">
+        <div className="flex flex-col flex-1 p-5 md:p-6">
           {/* Subtitle */}
           <p
             className="text-[10px] md:text-[11px] font-mono tracking-[0.22em] uppercase mb-2 flex-shrink-0"
@@ -214,12 +214,18 @@ function ProjectCard({
           {/* Footer: links */}
           <div
             className="flex items-center gap-3 pt-4 mt-auto flex-shrink-0 w-full"
-            style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
+            style={{ borderTop: "1px solid rgba(255,255,255,0.05)", minHeight: "48px" }}
           >
             <a
               href={project.href}
+              target={project.demo ? "_blank" : undefined}
+              rel={project.demo ? "noopener noreferrer" : undefined}
               data-cursor-hover
-              className="flex items-center gap-1.5 text-[11px] md:text-[12px] font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-200"
+              className={`flex items-center gap-1.5 text-[11px] md:text-[12px] font-mono transition-colors duration-200 ${
+                project.demo
+                  ? "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                  : "text-[var(--text-dim)] cursor-not-allowed opacity-40 pointer-events-none"
+              }`}
             >
               <ExternalLink size={11} strokeWidth={2} />
               Live Site
@@ -389,107 +395,111 @@ export default function Projects() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      id="work"
-      className="relative w-full bg-black"
-      aria-label="Selected Projects"
-    >
-      <SectionAmbient />
+    <>
+      <section
+        ref={sectionRef}
+        id="work"
+        className="relative w-full bg-black"
+        aria-label="Selected Projects"
+      >
+        <SectionAmbient />
 
-      {/* -- Pinned content shell -- */}
-      <div className="h-screen flex flex-col">
+        {/* -- Pinned content shell -- */}
+        <div className="h-screen flex flex-col">
 
-        {/* -- Section header -- */}
-        <div
-          ref={headerRef}
-          className="container-fluid flex items-end justify-between flex-shrink-0"
-          style={{ paddingTop: "clamp(2rem, 5vh, 3.5rem)", paddingBottom: "clamp(1rem, 3vh, 2rem)" }}
-        >
-          {/* Left: title */}
-          <div>
-            <p className="text-[11px] font-mono tracking-[0.32em] uppercase text-[var(--purple)] mb-3">
-              Selected Work
-            </p>
-            <h2
-              className="font-display font-bold text-[var(--text-primary)] leading-[1.05] tracking-tight"
-              style={{ fontSize: "clamp(1.9rem, 4.5vw, 3.8rem)" }}
-            >
-              Projects that pushed
-              <br />
-              <span className="gradient-text">the craft.</span>
-            </h2>
-          </div>
-
-          {/* Right: progress + scroll hint */}
-          <div className="hidden md:flex flex-col items-end gap-3">
-            <ProgressDots activeIndex={activeIndex} />
-            <p className="text-[11px] font-mono text-[var(--text-dim)] flex items-center gap-2">
-              <svg
-                width="16"
-                height="10"
-                viewBox="0 0 16 10"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M1 5h14M10 1l4 4-4 4"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              Scroll to explore
-            </p>
-          </div>
-        </div>
-
-        {/* -- Horizontally scrolling cards track -- */}
-        <div className="flex-1 flex items-center overflow-visible">
+          {/* -- Section header -- */}
           <div
-            ref={trackRef}
-            className="flex gap-7 will-change-transform flex-shrink-0"
-            style={{
-              paddingInline: "clamp(1.25rem, 5vw, 5rem)",
-              width: "max-content",
-            }}
-            aria-label="Project cards"
+            ref={headerRef}
+            className="container-fluid flex items-end justify-between flex-shrink-0"
+            style={{ paddingTop: "clamp(2rem, 5vh, 3.5rem)", paddingBottom: "clamp(1rem, 3vh, 2rem)" }}
           >
-          {PROJECTS.map((project, i) => (
-            <ProjectCard key={project.id} project={project} index={i} />
-          ))}
-
-          {/* -- Outro panel: CTA after last card -- */}
-          <div
-            className="flex-shrink-0 flex items-center justify-center"
-            style={{ width: "clamp(280px, 25vw, 380px)" }}
-            aria-hidden="true"
-          >
-            <div className="text-center">
-              <p className="text-[11px] font-mono tracking-widest text-[var(--text-dim)] uppercase mb-4">
-                More coming
+            {/* Left: title */}
+            <div>
+              <p className="text-[11px] font-mono tracking-[0.32em] uppercase text-[var(--purple)] mb-3">
+                Selected Work
               </p>
-              <a
-                href="https://github.com/SeifTamer404"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-cursor-hover
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-200"
-                style={{
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  background: "rgba(255,255,255,0.03)",
-                }}
+              <h2
+                className="font-display font-bold text-[var(--text-primary)] leading-[1.05] tracking-tight"
+                style={{ fontSize: "clamp(1.9rem, 4.5vw, 3.8rem)" }}
               >
-                <GitFork size={13} />
-                View GitHub
-              </a>
+                Projects that pushed
+                <br />
+                <span className="gradient-text">the craft.</span>
+              </h2>
+            </div>
+
+            {/* Right: progress + scroll hint */}
+            <div className="hidden md:flex flex-col items-end gap-3">
+              <ProgressDots activeIndex={activeIndex} />
+              <p className="text-[11px] font-mono text-[var(--text-dim)] flex items-center gap-2">
+                <svg
+                  width="16"
+                  height="10"
+                  viewBox="0 0 16 10"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M1 5h14M10 1l4 4-4 4"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                Scroll to explore
+              </p>
             </div>
           </div>
-          </div>{/* end trackRef */}
-        </div>{/* end flex-1 centering wrapper */}
-      </div>{/* end h-screen shell */}
-    </section>
 
+          {/* -- Horizontally scrolling cards track -- */}
+          <div className="flex-1 flex items-center overflow-visible">
+            <div
+              ref={trackRef}
+              className="flex gap-7 will-change-transform flex-shrink-0"
+              style={{
+                paddingInline: "clamp(1.25rem, 5vw, 5rem)",
+                width: "max-content",
+              }}
+              aria-label="Project cards"
+            >
+            {PROJECTS.map((project, i) => (
+              <ProjectCard key={project.id} project={project} index={i} />
+            ))}
+
+            {/* -- Outro panel: CTA after last card -- */}
+            <div
+              className="flex-shrink-0 flex items-center justify-center"
+              style={{ width: "clamp(280px, 25vw, 380px)" }}
+              aria-hidden="true"
+            >
+              <div className="text-center">
+                <p className="text-[11px] font-mono tracking-widest text-[var(--text-dim)] uppercase mb-4">
+                  More coming
+                </p>
+                <a
+                  href="https://github.com/SeifTamer404"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-cursor-hover
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-200"
+                  style={{
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    background: "rgba(255,255,255,0.03)",
+                  }}
+                >
+                  <GitFork size={13} />
+                  View GitHub
+                </a>
+              </div>
+            </div>
+            </div>{/* end trackRef */}
+          </div>{/* end flex-1 centering wrapper */}
+        </div>{/* end h-screen shell */}
+      </section>
+
+      {/* Bottom spacer — gives breathing room after the pinned section ends */}
+      <div aria-hidden="true" style={{ height: "8rem", background: "#000" }} />
+    </>
   );
 }

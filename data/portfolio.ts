@@ -36,6 +36,7 @@ export interface Project {
   stack: string[];
   image: string;
   github: string;
+  demo?: string;
 }
 
 export interface PortfolioData {
@@ -114,6 +115,21 @@ export const portfolioData: PortfolioData = {
     },
   ],
   projects: [
+      {
+      id: "avex-ecommerce",
+      title: "AVEX Marketplace",
+      description: "A high-performance full-stack marketplace featuring smart search, robust Redux state management, secure authentication, and enterprise-grade SEO using Next.js ISR & SSR.",
+      stack: [
+        "Next.js (App Router)", 
+        "Redux Toolkit", 
+        "MongoDB & Mongoose", 
+        "Better Auth", 
+        "Tailwind CSS"
+      ],
+      image: "/project/avex.png",
+      github: "https://github.com/SeifTamer404/avex-ecommerce",
+      demo: "https://avex-ecommerce.vercel.app"
+    },
     {
       id: "react-events",
       title: "React Events",
